@@ -1,0 +1,23 @@
+# Optional local services (NOT required — app runs without Docker).
+# Free-tier default is cloud Postgres (Supabase/Neon) + local storage dir.
+# Use this file only if you later install Docker and want local parity.
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: awp
+      POSTGRES_PASSWORD: awp
+      POSTGRES_DB: awp
+    ports: ["5432:5432"]
+    volumes: [pgdata:/var/lib/postgresql/data]
+  minio:
+    image: minio/minio:latest
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: minio
+      MINIO_ROOT_PASSWORD: minio12345
+    ports: ["9000:9000", "9001:9001"]
+    volumes: [miniodata:/data]
+volumes:
+  pgdata:
+  miniodata:

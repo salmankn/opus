@@ -1,0 +1,271 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Multi-tenant root (§10, §42). Every tenant row carries workspaceId.
+model User {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  emailVerified DateTime?
+  passwordHash  String?
+  name          String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  memberships   WorkspaceMember[]
+  auditLogs     AuditLog[]
+}
+
+model Workspace {
+  id        String   @id @default(cuid())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  members   WorkspaceMember[]
+  projects  Project[]
+  tasks     Task[]
+  files     File[]
+  artifacts Artifact[]
+  memories  Memory[]
+  credentials Credential[]
+  integrations Integration[]
+  usage     UsageRecord[]
+  auditLogs AuditLog[]
+}
+
+model WorkspaceMember {
+  id          String   @id @default(cuid())
+  workspaceId String
+  userId      String
+  role        String   // OWNER | ADMIN | MEMBER | VIEWER (§10)
+  createdAt   DateTime @default(now())
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([workspaceId, userId])
+  @@index([workspaceId])
+}
+
+model Project {
+  id          String   @id @default(cuid())
+  workspaceId String
+  name        String
+  description String?
+  instructions String?
+  config      Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  tasks       Task[]
+  files       File[]
+  artifacts   Artifact[]
+  memories    Memory[]
+
+  @@index([workspaceId])
+}
+
+model Task {
+  id          String   @id @default(cuid())
+  workspaceId String
+  projectId   String?
+  goal        String
+  status      String   @default("DRAFT") // state machine enforced in domain lib (§12)
+  plan        Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  project     Project?  @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  steps       TaskStep[]
+  events      TaskEvent[]
+  sessions    AgentSession[]
+  files       File[]
+  artifacts   Artifact[]
+
+  @@index([workspaceId, status])
+}
+
+model TaskStep {
+  id        String   @id @default(cuid())
+  taskId    String
+  key       String
+  label     String
+  status    String   @default("pending") // pending|running|completed|failed|skipped
+  dependsOn String[] @default([])
+  output    Json?
+  attempts  Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  task      Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  @@unique([taskId, key])
+  @@index([taskId])
+}
+
+model TaskEvent {
+  id        String   @id @default(cuid())
+  taskId    String
+  type      String   // TASK_STARTED … TASK_COMPLETED (§34)
+  payload   Json?
+  createdAt DateTime @default(now())
+  task      Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  @@index([taskId, createdAt])
+}
+
+model AgentSession {
+  id        String   @id @default(cuid())
+  taskId    String
+  status    String   @default("active")
+  context   Json?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  task      Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  toolExecs ToolExecution[]
+  modelExecs ModelExecution[]
+
+  @@index([taskId])
+}
+
+model ToolExecution {
+  id        String   @id @default(cuid())
+  sessionId String
+  toolId    String
+  input     Json?
+  output    Json?
+  status    String   @default("ok") // ok|error|denied
+  ms        Int?
+  createdAt DateTime @default(now())
+  session   AgentSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId])
+}
+
+model ModelExecution {
+  id        String   @id @default(cuid())
+  sessionId String
+  provider  String
+  model     String
+  capability String?
+  tokensIn  Int?
+  tokensOut Int?
+  costUsd   Float?
+  ms        Int?
+  createdAt DateTime @default(now())
+  session   AgentSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId])
+}
+
+model File {
+  id          String   @id @default(cuid())
+  workspaceId String
+  projectId   String?
+  taskId      String?
+  path        String   // workspace-relative, never absolute; traversal rejected (§25)
+  size        Int?
+  mime        String?
+  createdAt   DateTime @default(now())
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  project     Project?  @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  task        Task?     @relation(fields: [taskId], references: [id], onDelete: SetNull)
+
+  @@unique([workspaceId, path])
+  @@index([workspaceId])
+}
+
+model Artifact {
+  id          String   @id @default(cuid())
+  workspaceId String
+  projectId   String?
+  taskId      String?
+  name        String
+  type        String   // pdf|docx|xlsx|csv|pptx|json|zip|code|…
+  size        Int?
+  storageKey  String   // object-storage key; large binaries never in DB (§33)
+  version     Int      @default(1)
+  metadata    Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  project     Project?  @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  task        Task?     @relation(fields: [taskId], references: [id], onDelete: SetNull)
+
+  @@index([workspaceId])
+  @@index([taskId])
+}
+
+model Memory {
+  id          String   @id @default(cuid())
+  workspaceId String
+  projectId   String?
+  scope       String   // task|project|user|execution (§31)
+  key         String
+  value       Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  project     Project?  @relation(fields: [projectId], references: [id], onDelete: SetNull)
+
+  @@unique([workspaceId, scope, key])
+  @@index([workspaceId, scope])
+}
+
+model Credential {
+  id          String   @id @default(cuid())
+  workspaceId String
+  name        String
+  // Only encrypted blob + pointer. Never plaintext, never in logs/context (§38).
+  encBlob     String
+  scopes      String[] @default([])
+  expiresAt   DateTime?
+  createdAt   DateTime @default(now())
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId])
+}
+
+model Integration {
+  id          String   @id @default(cuid())
+  workspaceId String
+  provider    String   // github|drive|slack|… (§39)
+  config      Json?
+  createdAt   DateTime @default(now())
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, provider])
+}
+
+model UsageRecord {
+  id          String   @id @default(cuid())
+  workspaceId String
+  taskId      String?
+  kind        String   // model-tokens|tool-exec|build-seconds|storage-bytes|…
+  qty         Float
+  costUsd     Float?
+  createdAt   DateTime @default(now())
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, createdAt])
+}
+
+model AuditLog {
+  id          String   @id @default(cuid())
+  workspaceId String?
+  userId      String?
+  action      String
+  target      String?
+  meta        Json?
+  createdAt   DateTime @default(now())
+  workspace   Workspace? @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  user        User?      @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([workspaceId, createdAt])
+}
+
+// NOTE: No BrowserSession / ComputerSession tables —
+// interactive browser/computer control (§21-22) is out of scope by owner decision.
+// NOTE: Queue jobs persist in Postgres via Task/TaskStep/TaskEvent (pg queue, §53).

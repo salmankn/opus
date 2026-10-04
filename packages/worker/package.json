@@ -1,0 +1,1 @@
+{"name": "@platform/worker", "version": "0.1.0", "private": true, "type": "module", "dependencies": {"tsx": "^4.19.1", "@platform/queue": "0.1.0", "@platform/agent-runtime": "0.1.0"}}

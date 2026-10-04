@@ -1,0 +1,27 @@
+{
+  "name": "autonomous-work-platform",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Manus-like autonomous AI work platform (fetch-only research, no browser/computer control) — $0 free-tier build",
+  "workspaces": [
+    "apps/web",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace=apps/web",
+    "build": "npm run build --workspace=apps/web",
+    "typecheck": "tsc --noEmit -p tsconfig.base.json",
+    "lint": "echo \"lint placeholder — eslint wired in apps/web\"",
+    "db:generate": "prisma generate --schema=prisma/schema.prisma",
+    "db:push": "prisma db push --schema=prisma/schema.prisma",
+    "worker": "tsx packages/worker/src/index.ts"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3",
+    "tsx": "^4.19.1",
+    "prisma": "^5.22.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

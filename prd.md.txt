@@ -1,0 +1,2285 @@
+# MASTER PRODUCT REQUIREMENTS DOCUMENT (PRD)
+
+## Product: Autonomous AI Work Platform
+
+## Version: 1.0
+
+## Product Type: AI SaaS / Web Application
+
+## Product Category: Autonomous AI Work & Computer-Use Platform
+
+---
+
+# 1. PRODUCT OVERVIEW
+
+The product is a cloud-based autonomous AI work platform that allows users to give complex goals in natural language and have the system independently research, plan, browse the web, use computer interfaces, execute code, manipulate files, analyze information, create deliverables, verify results, recover from failures, and complete the requested work.
+
+The product is inspired by the category of products represented by Manus-like autonomous AI systems, but it must be designed as an independent product with its own architecture, UX, capabilities, security model, and implementation.
+
+The platform is **not primarily a chatbot**.
+
+The core experience is:
+
+```text
+USER GOAL
+   ↓
+UNDERSTAND
+   ↓
+PLAN
+   ↓
+TASK GRAPH
+   ↓
+EXECUTE
+   ↓
+OBSERVE
+   ↓
+VERIFY
+   ↓
+RECOVER / REPLAN
+   ↓
+DELIVER
+```
+
+Example user request:
+
+> "Research the top 20 AI resume builders, compare their pricing and features, create an Excel spreadsheet, analyze the market, and generate a PDF report."
+
+The platform should be capable of:
+
+1. Understanding the objective.
+2. Breaking the objective into tasks.
+3. Searching and browsing the web.
+4. Collecting information.
+5. Analyzing the information.
+6. Creating files.
+7. Verifying generated files and results.
+8. Recovering from failed steps.
+9. Delivering the final artifacts.
+
+---
+
+# 2. PRODUCT VISION
+
+Build a general-purpose AI worker capable of performing meaningful digital work rather than simply answering questions.
+
+The long-term vision is:
+
+> "Give the platform a goal, not a list of instructions."
+
+The user should not need to manually specify every action.
+
+Instead of:
+
+```text
+Search Google
+Open website
+Read pricing
+Copy information
+Create spreadsheet
+Analyze data
+Create report
+```
+
+the user should be able to say:
+
+```text
+Research this market and give me a complete competitive analysis.
+```
+
+The system determines how the work should be performed.
+
+---
+
+# 3. PRODUCT PRINCIPLES
+
+The platform must follow these principles:
+
+### 3.1 Goal-oriented
+
+The system operates from user goals rather than individual commands.
+
+### 3.2 Autonomous
+
+The agent should perform multiple steps without requiring constant user interaction.
+
+### 3.3 Observable
+
+Users must be able to understand what the system is doing.
+
+### 3.4 Verifiable
+
+The system must verify important results instead of trusting model-generated claims.
+
+### 3.5 Recoverable
+
+Failures should trigger retry, alternative strategies, or replanning.
+
+### 3.6 Secure
+
+AI-generated actions must execute inside controlled environments.
+
+### 3.7 Modular
+
+Models, tools, workers, browser systems, and storage must be replaceable.
+
+### 3.8 Provider-independent
+
+The platform must not be tightly coupled to a single AI provider.
+
+### 3.9 Multi-tenant
+
+Users and organizations must be isolated from each other.
+
+### 3.10 Extensible
+
+New tools, models, integrations, and execution environments must be addable without redesigning the entire system.
+
+---
+
+# 4. PRODUCT GOALS
+
+The platform must eventually support:
+
+* Natural-language task execution
+* Autonomous planning
+* Multi-step task execution
+* Web research
+* Web browsing
+* Computer interaction
+* Terminal execution
+* Code generation and execution
+* File operations
+* Data analysis
+* Document generation
+* Spreadsheet generation
+* PDF generation
+* Presentation generation
+* Persistent projects
+* Task memory
+* User memory
+* Artifact management
+* Verification
+* Automatic recovery
+* Human approval
+* Real-time task monitoring
+* Multi-user workspaces
+* Authentication
+* Authorization
+* Usage limits
+* API access
+* Integrations
+* Billing
+* Administration
+
+---
+
+# 5. NON-GOALS
+
+The initial product is not intended to be:
+
+* A simple ChatGPT clone
+* A normal chatbot
+* An AI prompt marketplace
+* A generic AI model playground
+* A user-facing agent-building platform
+* A programming language
+* A replacement for operating systems
+* An unrestricted shell running directly on production infrastructure
+
+The platform itself is the autonomous worker.
+
+---
+
+# 6. TARGET USERS
+
+## 6.1 Individual Users
+
+People who want AI to perform digital work.
+
+Examples:
+
+* Developers
+* Researchers
+* Students
+* Entrepreneurs
+* Marketers
+* Analysts
+* Designers
+* Freelancers
+* Content creators
+
+## 6.2 Professionals
+
+Users who perform repetitive knowledge work.
+
+Examples:
+
+* Market research
+* Competitive analysis
+* Reporting
+* Data collection
+* Documentation
+* Business analysis
+* Research
+
+## 6.3 Teams
+
+Organizations that need:
+
+* Shared projects
+* Shared artifacts
+* Shared task history
+* Permissions
+* Audit logs
+* Usage controls
+
+---
+
+# 7. CORE USER EXPERIENCE
+
+The primary interface should provide a task composer.
+
+Example:
+
+```text
+┌──────────────────────────────────────────────┐
+│ What can I do for you?                       │
+│                                              │
+│ Research 20 competitors of my SaaS product, │
+│ compare pricing/features and create a       │
+│ spreadsheet + PDF report.                    │
+│                                              │
+│ 📎 Attach files                              │
+│                                              │
+│                         [ Run Task ]          │
+└──────────────────────────────────────────────┘
+```
+
+After submission:
+
+```text
+Understanding request...
+        ↓
+Creating plan...
+        ↓
+Researching...
+        ↓
+Analyzing...
+        ↓
+Creating spreadsheet...
+        ↓
+Creating report...
+        ↓
+Verifying results...
+        ↓
+Completed
+```
+
+---
+
+# 8. PRODUCT STRUCTURE
+
+The application should contain the following major areas:
+
+```text
+Application
+│
+├── Dashboard
+├── Tasks
+├── Projects
+├── Artifacts
+├── Activity
+├── Workspace
+│
+├── Task Workspace
+│   ├── Goal
+│   ├── Plan
+│   ├── Execution
+│   ├── Browser
+│   ├── Terminal
+│   ├── Files
+│   ├── Verification
+│   └── Artifacts
+│
+├── Settings
+│   ├── Account
+│   ├── Workspace
+│   ├── Models
+│   ├── API Keys
+│   ├── Credentials
+│   ├── Integrations
+│   └── Usage
+│
+└── Administration
+```
+
+---
+
+# 9. AUTHENTICATION
+
+The platform must support secure authentication.
+
+Required capabilities:
+
+* Email/password authentication
+* Email verification
+* Password reset
+* Session management
+* OAuth providers
+* Logout
+* Account management
+* Secure session expiration
+* Authentication rate limiting
+
+Authentication must be implemented server-side.
+
+---
+
+# 10. WORKSPACES
+
+A workspace represents an isolated organization/user environment.
+
+A workspace owns:
+
+* Members
+* Projects
+* Tasks
+* Files
+* Artifacts
+* Credentials
+* Integrations
+* Usage
+* Settings
+* Audit logs
+
+Workspace roles:
+
+```text
+OWNER
+ADMIN
+MEMBER
+VIEWER
+```
+
+All workspace resources must be authorized server-side.
+
+Client-provided IDs must never be trusted for authorization.
+
+---
+
+# 11. PROJECTS
+
+Projects provide persistent context for related work.
+
+A project may contain:
+
+* Project description
+* Instructions
+* Files
+* Artifacts
+* Tasks
+* Memories
+* Integrations
+* Credentials
+* Configuration
+
+Example:
+
+```text
+Project: My SaaS Research
+
+Tasks:
+- Competitor analysis
+- Pricing research
+- Market research
+- Feature comparison
+
+Files:
+- competitor-data.xlsx
+- market-report.pdf
+```
+
+Projects should allow future tasks to reuse relevant context.
+
+---
+
+# 12. TASK SYSTEM
+
+A task represents a user-requested unit of autonomous work.
+
+Task states:
+
+```text
+DRAFT
+QUEUED
+PLANNING
+READY
+RUNNING
+WAITING
+VERIFYING
+COMPLETED
+FAILED
+CANCELLED
+PAUSED
+```
+
+Invalid state transitions must be rejected.
+
+Example:
+
+```text
+QUEUED
+   ↓
+PLANNING
+   ↓
+READY
+   ↓
+RUNNING
+   ↓
+VERIFYING
+   ↓
+COMPLETED
+```
+
+Failure:
+
+```text
+RUNNING
+   ↓
+FAILED
+   ↓
+RECOVERY
+   ↓
+RUNNING
+```
+
+---
+
+# 13. TASK COMPOSER
+
+The composer must allow users to:
+
+* Enter natural-language goals
+* Attach files
+* Select a project
+* Configure optional settings
+* Specify output requirements
+* Start execution
+
+Optional advanced controls:
+
+* Model preference
+* Maximum execution time
+* Cost limit
+* Browser permission
+* File permission
+* Network permission
+* Human approval requirements
+
+The default experience should remain simple.
+
+---
+
+# 14. AGENT RUNTIME
+
+The Agent Runtime is the central execution engine.
+
+Responsibilities:
+
+* Receive tasks
+* Maintain agent sessions
+* Load context
+* Request plans
+* Execute task steps
+* Call tools
+* Process observations
+* Verify results
+* Retry failures
+* Replan
+* Request user approval
+* Produce final results
+
+The agent must not directly access arbitrary infrastructure.
+
+Correct architecture:
+
+```text
+Agent
+  ↓
+Tool Request
+  ↓
+Tool Registry
+  ↓
+Permission Check
+  ↓
+Tool Executor
+  ↓
+Queue
+  ↓
+Controlled Worker/Sandbox
+  ↓
+Result
+  ↓
+Observation
+  ↓
+Agent
+```
+
+---
+
+# 15. PLANNER
+
+The Planner converts the user goal into an executable plan.
+
+Example:
+
+```text
+Goal:
+Research competitors and create report.
+
+Plan:
+
+1. Identify competitors
+2. Collect websites
+3. Research pricing
+4. Research features
+5. Validate information
+6. Normalize data
+7. Create spreadsheet
+8. Analyze market
+9. Create report
+10. Verify artifacts
+11. Deliver
+```
+
+The planner should consider:
+
+* Dependencies
+* Parallelization
+* Required tools
+* Expected outputs
+* Verification requirements
+* User permissions
+* Execution cost
+* Time limits
+
+---
+
+# 16. TASK GRAPH
+
+Complex tasks must be represented as a graph.
+
+Example:
+
+```text
+          Research
+          /      \
+     Pricing    Features
+          \      /
+           Analysis
+              ↓
+        Spreadsheet
+              ↓
+           Report
+              ↓
+         Verification
+```
+
+Task graph requirements:
+
+* Sequential execution
+* Parallel execution
+* Dependencies
+* Conditional branches
+* Retries
+* Skipped nodes
+* Failed nodes
+* Completed nodes
+* Dynamic task creation
+
+---
+
+# 17. MODEL SYSTEM
+
+The AI layer must use a provider-independent architecture.
+
+Conceptual components:
+
+```text
+AIProvider
+Model
+ModelRouter
+ModelExecution
+```
+
+The system should support different model capabilities:
+
+* Planning
+* Reasoning
+* Coding
+* Vision
+* Extraction
+* Summarization
+* Verification
+* Fast/cheap operations
+
+Potential providers may include:
+
+* OpenAI
+* Anthropic
+* Google
+* OpenRouter
+* Local/self-hosted models
+
+Provider implementations must be replaceable.
+
+API keys must remain server-side.
+
+---
+
+# 18. MODEL ROUTER
+
+The Model Router chooses the appropriate model for each operation.
+
+Routing factors:
+
+* Task type
+* Capability
+* Context length
+* Cost
+* Latency
+* Reliability
+* Provider availability
+* User/workspace limits
+
+Example:
+
+```text
+Planning      → reasoning model
+Coding        → coding model
+Screenshot    → vision model
+Verification  → verification model
+Simple task   → fast model
+```
+
+The system must support fallback models when appropriate.
+
+---
+
+# 19. TOOL SYSTEM
+
+Tools are controlled capabilities available to the agent.
+
+Every tool must define:
+
+* ID
+* Name
+* Description
+* Version
+* Capabilities
+* Input schema
+* Output schema
+* Permission requirements
+* Timeout
+* Execution policy
+
+Tool execution flow:
+
+```text
+Agent
+ ↓
+Tool Request
+ ↓
+Input Validation
+ ↓
+Permission Check
+ ↓
+Tool Execution
+ ↓
+Observation
+ ↓
+Result
+```
+
+---
+
+# 20. WEB RESEARCH
+
+The platform must support web research.
+
+Capabilities:
+
+* Search web
+* Open pages
+* Fetch pages
+* Extract information
+* Compare sources
+* Collect structured information
+* Cite sources
+* Detect failed pages
+* Retry alternative sources
+
+Web content must be treated as untrusted input.
+
+External content must never override system-level security instructions.
+
+---
+
+# 21. BROWSER AGENT
+
+The Browser Agent allows the AI to interact with websites.
+
+Capabilities:
+
+* Open URL
+* Click
+* Type
+* Scroll
+* Select
+* Navigate
+* Extract
+* Take screenshots
+* Read page state
+
+Browser sessions must be isolated.
+
+Browser cookies and credentials must not leak between users or tasks.
+
+Browser execution must not run inside the primary web server process.
+
+---
+
+# 22. COMPUTER-USE AGENT
+
+The platform should support computer interaction.
+
+Execution loop:
+
+```text
+SCREENSHOT
+   ↓
+VISION / OBSERVATION
+   ↓
+ACTION
+   ↓
+SCREENSHOT
+   ↓
+VERIFY
+```
+
+Supported actions may include:
+
+* Mouse movement
+* Mouse click
+* Double click
+* Keyboard input
+* Scrolling
+* Window interaction
+* Selecting UI elements
+
+High-risk actions should require approval where appropriate.
+
+---
+
+# 23. TERMINAL AGENT
+
+The Terminal Agent provides controlled command-line execution.
+
+It must support:
+
+* Execute commands
+* Read output
+* Detect exit codes
+* Read files
+* Write files
+* Run scripts
+* Install permitted dependencies
+* Run tests
+* Run builds
+* Run linters
+
+The AI must never receive unrestricted access to the production host shell.
+
+---
+
+# 24. CODE AGENT
+
+The Code Agent can:
+
+* Inspect repositories
+* Read source files
+* Modify files
+* Create files
+* Run tests
+* Run builds
+* Run linters
+* Debug failures
+* Review changes
+* Verify output
+
+Example:
+
+```text
+Understand code
+ ↓
+Plan changes
+ ↓
+Edit
+ ↓
+Run tests
+ ↓
+Observe failure
+ ↓
+Fix
+ ↓
+Run tests again
+ ↓
+Verify
+```
+
+---
+
+# 25. FILE SYSTEM AGENT
+
+File operations must be controlled.
+
+Capabilities:
+
+* List files
+* Search files
+* Read files
+* Write files
+* Move
+* Copy
+* Rename
+* Delete
+* Create directories
+* Inspect metadata
+
+The system must protect against:
+
+* Path traversal
+* Unauthorized access
+* Cross-tenant access
+* Sensitive file exposure
+
+---
+
+# 26. SANDBOX
+
+All potentially dangerous execution must occur in an isolated environment.
+
+Sandbox responsibilities:
+
+* Filesystem isolation
+* Process isolation
+* Resource limits
+* Network restrictions
+* Environment isolation
+* Credential isolation
+* Execution timeout
+* Process termination
+* Cleanup
+
+The architecture should support different isolation technologies, including containers or lightweight virtualized environments.
+
+The application must not assume that Docker is the only possible deployment model.
+
+---
+
+# 27. OBSERVATION SYSTEM
+
+The agent must operate using real observations.
+
+Possible observations:
+
+* Browser screenshots
+* Browser page state
+* Terminal output
+* Exit codes
+* Filesystem state
+* File metadata
+* Search results
+* HTTP responses
+* Test results
+* Build results
+* Generated artifacts
+
+The model must not assume an action succeeded simply because it generated a successful-looking response.
+
+---
+
+# 28. VERIFICATION ENGINE
+
+Verification is mandatory for important outputs.
+
+Examples:
+
+### File verification
+
+```text
+File exists?
+Readable?
+Correct format?
+Expected content?
+```
+
+### Code verification
+
+```text
+Build successful?
+Tests successful?
+Lint successful?
+Expected behavior verified?
+```
+
+### Research verification
+
+```text
+Sources available?
+Required fields collected?
+Data consistent?
+```
+
+### Browser verification
+
+```text
+Expected page state?
+Expected action completed?
+```
+
+Task completion should require appropriate verification.
+
+---
+
+# 29. RECOVERY ENGINE
+
+When execution fails, the system should classify the failure.
+
+Failure categories:
+
+* Timeout
+* Network failure
+* Website change
+* Invalid input
+* Authentication failure
+* Tool failure
+* Resource limit
+* Model failure
+* Verification failure
+* Sandbox failure
+
+Recovery strategies:
+
+```text
+Failure
+ ↓
+Classify
+ ↓
+Retry?
+ ├── Yes → Retry
+ └── No
+      ↓
+Alternative strategy?
+      ↓
+Replan
+      ↓
+Continue
+```
+
+Infinite retry loops are prohibited.
+
+Every task must have retry and execution limits.
+
+---
+
+# 30. HUMAN-IN-THE-LOOP
+
+The system must pause when human approval is necessary.
+
+Potential approval actions:
+
+* Sending messages
+* Publishing content
+* Purchasing something
+* Deleting important information
+* Changing external account settings
+* Submitting irreversible forms
+* Performing high-impact external actions
+
+User controls:
+
+```text
+Approve
+Reject
+Pause
+Resume
+Stop
+Cancel
+Retry
+Continue
+Provide Input
+```
+
+The agent must preserve task state while waiting.
+
+---
+
+# 31. MEMORY SYSTEM
+
+Memory should be divided into scopes.
+
+### Task Memory
+
+Information required for the current task.
+
+### Project Memory
+
+Persistent information associated with a project.
+
+### User Memory
+
+Long-term user preferences where explicitly appropriate.
+
+### Execution Memory
+
+Temporary state required by the agent during execution.
+
+Memory must have:
+
+* Scope
+* Ownership
+* Permissions
+* Retention policy
+* Deletion support
+* Retrieval mechanism
+
+Not every task event should become permanent memory.
+
+---
+
+# 32. CONTEXT MANAGEMENT
+
+The system must not send the entire task history to every model request.
+
+Context should be assembled from:
+
+```text
+System Instructions
++
+User Goal
++
+Current Task
++
+Relevant Plan
++
+Relevant Observations
++
+Retrieved Context
++
+Memory
++
+Tool Results
++
+Required Artifacts
+```
+
+Long contexts should be summarized or selectively retrieved.
+
+---
+
+# 33. ARTIFACT SYSTEM
+
+Artifacts are outputs generated by tasks.
+
+Supported artifact types should include:
+
+* PDF
+* DOCX
+* XLSX
+* CSV
+* PPTX
+* JSON
+* TXT
+* Markdown
+* Images
+* Code
+* ZIP
+* Other generated files
+
+Artifact metadata:
+
+```text
+id
+taskId
+projectId
+workspaceId
+name
+type
+size
+storageLocation
+version
+metadata
+createdAt
+updatedAt
+```
+
+Large binary files should be stored in object storage rather than directly inside the relational database.
+
+---
+
+# 34. REAL-TIME EXECUTION UI
+
+Users must see task progress in real time.
+
+Example:
+
+```text
+✓ Understanding request
+
+✓ Plan created
+
+✓ Researching competitors
+   ├── Search completed
+   ├── 12 websites analyzed
+   └── Pricing extracted
+
+⟳ Creating spreadsheet
+
+○ Creating report
+
+○ Verification
+```
+
+Important events include:
+
+```text
+TASK_STARTED
+PLAN_CREATED
+STEP_STARTED
+TOOL_STARTED
+TOOL_COMPLETED
+OBSERVATION_CREATED
+STEP_COMPLETED
+VERIFICATION_STARTED
+VERIFICATION_PASSED
+TASK_COMPLETED
+TASK_FAILED
+```
+
+Realtime communication may use WebSockets or Server-Sent Events.
+
+---
+
+# 35. TASK WORKSPACE
+
+Each task should have a dedicated execution view.
+
+Recommended areas:
+
+```text
+Task Header
+├── Goal
+├── Status
+├── Controls
+
+Main Area
+├── Plan
+├── Activity
+├── Browser / Computer
+├── Terminal
+├── Files
+├── Verification
+
+Side Area
+├── Artifacts
+├── Context
+├── Usage
+```
+
+Advanced technical details should be progressively disclosed instead of overwhelming normal users.
+
+---
+
+# 36. DASHBOARD
+
+Dashboard should provide:
+
+* New task composer
+* Recent tasks
+* Running tasks
+* Completed tasks
+* Projects
+* Recent artifacts
+* Usage information
+* Quick actions
+
+The primary action should always be starting a new task.
+
+---
+
+# 37. FILE UPLOADS
+
+Supported inputs may include:
+
+* PDF
+* DOCX
+* XLSX
+* CSV
+* Images
+* ZIP
+* Source-code repositories
+* TXT
+* Markdown
+
+Uploads must have:
+
+* Size limits
+* Type validation
+* Permission validation
+* Isolation
+* Malware/security scanning where appropriate
+* Tenant ownership
+
+Uploaded files must not automatically become accessible to unrelated tasks.
+
+---
+
+# 38. CREDENTIALS
+
+The platform may store:
+
+* API keys
+* OAuth credentials
+* Service credentials
+* Integration tokens
+
+Requirements:
+
+* Encryption at rest
+* Secure key management
+* Scoped access
+* Revocation
+* Expiration where supported
+* No secret logging
+* No unnecessary frontend exposure
+* No unnecessary insertion into model context
+
+Credentials must be separated from ordinary task memory.
+
+---
+
+# 39. INTEGRATIONS
+
+The architecture should support future integrations such as:
+
+* GitHub
+* GitLab
+* Google Drive
+* Slack
+* Notion
+* Gmail
+* Calendar
+* Linear
+* Jira
+* Cloud storage
+* Databases
+* APIs
+
+Integrations must use permission-scoped access.
+
+---
+
+# 40. API
+
+The platform should eventually expose APIs for programmatic task execution.
+
+Core API capabilities:
+
+```text
+Create Task
+Get Task
+List Tasks
+Cancel Task
+Pause Task
+Resume Task
+Retry Task
+Get Task Events
+List Artifacts
+Get Artifact
+Create Project
+Get Project
+```
+
+API authentication may use:
+
+* API keys
+* OAuth
+* Workspace-scoped credentials
+
+API permissions must follow workspace authorization.
+
+---
+
+# 41. DATABASE REQUIREMENTS
+
+Core entities should include:
+
+```text
+User
+Workspace
+WorkspaceMember
+Project
+Task
+TaskStep
+TaskEvent
+AgentSession
+ModelExecution
+ToolExecution
+File
+Artifact
+Memory
+Credential
+UsageRecord
+AuditLog
+Integration
+```
+
+Every tenant-owned entity must contain appropriate workspace ownership relationships.
+
+Database access must enforce authorization at the application/service layer.
+
+---
+
+# 42. MULTI-TENANCY
+
+The application must be designed as a multi-tenant SaaS.
+
+Tenant isolation must cover:
+
+* Database records
+* Files
+* Artifacts
+* Browser sessions
+* Sandboxes
+* Credentials
+* Memories
+* Logs
+* Usage
+* Integrations
+
+A user from Workspace A must never access Workspace B resources.
+
+---
+
+# 43. SECURITY
+
+Security is a core product requirement.
+
+The platform must defend against:
+
+* Prompt injection
+* Command injection
+* SQL injection
+* XSS
+* CSRF
+* SSRF
+* Path traversal
+* IDOR
+* Credential leakage
+* Malicious uploads
+* Unauthorized tool execution
+* Sandbox escape
+* Cross-tenant data access
+* Rate abuse
+* Resource exhaustion
+
+Important rule:
+
+> External content is data, not trusted instructions.
+
+---
+
+# 44. AI ACTION SECURITY
+
+AI-generated instructions must be treated as untrusted.
+
+The system must validate:
+
+```text
+Model Output
+ ↓
+Schema Validation
+ ↓
+Permission Validation
+ ↓
+Policy Validation
+ ↓
+Tool Execution
+```
+
+The model must not bypass permission checks.
+
+The model must not directly access databases, filesystem, production servers, credentials, or infrastructure unless explicitly mediated by controlled tools.
+
+---
+
+# 45. AUDIT LOGGING
+
+Security-sensitive actions must be auditable.
+
+Audit events should include:
+
+* Authentication
+* Authorization changes
+* Credential creation
+* Credential deletion
+* Task creation
+* Tool execution
+* External actions
+* File operations
+* Artifact creation
+* Workspace changes
+* Administrative actions
+
+Audit logs must not contain raw secrets.
+
+---
+
+# 46. USAGE AND COST CONTROL
+
+Because autonomous tasks can consume significant resources, the system must track:
+
+* Model tokens
+* Model cost
+* Execution duration
+* Tool executions
+* Browser usage
+* Sandbox usage
+* Storage
+* API usage
+
+Controls should include:
+
+* Task limits
+* Token limits
+* Time limits
+* Tool limits
+* Retry limits
+* Workspace quotas
+* Rate limits
+
+---
+
+# 47. RATE LIMITING
+
+Rate limiting should apply to:
+
+* Login
+* Signup
+* Password reset
+* API requests
+* Task creation
+* Model execution
+* Tool execution
+* File uploads
+* Browser sessions
+* Expensive operations
+
+Limits should be configurable by:
+
+```text
+User
+Workspace
+API Key
+IP
+Endpoint
+Resource
+```
+
+---
+
+# 48. BILLING
+
+The platform should support SaaS monetization.
+
+Potential plans:
+
+```text
+Free
+Pro
+Team
+Enterprise
+```
+
+Usage-based billing may eventually include:
+
+* AI usage
+* Execution time
+* Browser usage
+* Storage
+* API usage
+
+Billing architecture should remain separate from core agent execution.
+
+---
+
+# 49. ADMINISTRATION
+
+Admin functionality should provide:
+
+* Users
+* Workspaces
+* Tasks
+* Models
+* Providers
+* Tool health
+* Worker health
+* Browser health
+* Sandbox health
+* Usage
+* Errors
+* Security events
+* System configuration
+
+Administrative permissions must be strongly protected.
+
+---
+
+# 50. OBSERVABILITY
+
+The platform must provide:
+
+### Logs
+
+Structured application and worker logs.
+
+### Metrics
+
+Examples:
+
+* Task completion rate
+* Task failure rate
+* Average task duration
+* Model latency
+* Tool latency
+* Queue depth
+* Worker utilization
+* Browser failures
+* Sandbox failures
+
+### Tracing
+
+Important execution identifiers:
+
+```text
+requestId
+workspaceId
+taskId
+agentSessionId
+taskStepId
+toolExecutionId
+modelExecutionId
+```
+
+Secrets must never appear in logs or traces.
+
+---
+
+# 51. INFRASTRUCTURE ARCHITECTURE
+
+Recommended logical architecture:
+
+```text
+                         INTERNET
+                            │
+                            ▼
+                    WEB APPLICATION
+                            │
+                            ▼
+                          API
+                 ┌──────────┼──────────┐
+                 │          │          │
+                 ▼          ▼          ▼
+              DATABASE     QUEUE    OBJECT STORAGE
+                            │
+              ┌─────────────┼─────────────┐
+              │             │             │
+              ▼             ▼             ▼
+         AGENT WORKER   BROWSER WORKER  SANDBOX WORKER
+              │             │             │
+              └─────────────┼─────────────┘
+                            ▼
+                      MODEL PROVIDERS
+```
+
+The web/API layer must not perform long-running autonomous execution synchronously.
+
+---
+
+# 52. WORKER ARCHITECTURE
+
+Long-running operations should be delegated to workers.
+
+Worker categories may include:
+
+```text
+Agent Worker
+Browser Worker
+Computer Worker
+Sandbox Worker
+Artifact Worker
+Verification Worker
+```
+
+Workers must support:
+
+* Job isolation
+* Timeouts
+* Cancellation
+* Retry
+* Failure reporting
+* Resource limits
+
+---
+
+# 53. QUEUE SYSTEM
+
+The queue manages asynchronous work.
+
+Requirements:
+
+* Job persistence
+* Retry policies
+* Delayed jobs
+* Failure handling
+* Cancellation
+* Worker coordination
+* Dead-letter handling where appropriate
+
+The exact queue technology can be selected during implementation based on infrastructure requirements.
+
+---
+
+# 54. STORAGE
+
+Different data types should use appropriate storage.
+
+### PostgreSQL
+
+Structured application data.
+
+### Object Storage
+
+Large files and artifacts.
+
+### Queue
+
+Asynchronous jobs.
+
+### Cache
+
+Short-lived performance data.
+
+### Search/Vector Storage
+
+Optional future capability for semantic retrieval and large project knowledge.
+
+---
+
+# 55. PERFORMANCE
+
+The platform must:
+
+* Keep normal API requests short
+* Run long tasks asynchronously
+* Stream task progress
+* Avoid unnecessary model calls
+* Cache reusable information where safe
+* Use appropriate model routing
+* Parallelize independent tasks
+* Enforce resource limits
+
+The UI must remain responsive while autonomous tasks run.
+
+---
+
+# 56. SCALABILITY
+
+The following components should be independently scalable:
+
+```text
+Web
+API
+Agent Workers
+Browser Workers
+Sandbox Workers
+Queue
+Database
+Object Storage
+Realtime Service
+```
+
+The architecture should support horizontal scaling.
+
+---
+
+# 57. ERROR HANDLING
+
+Errors must be categorized and surfaced appropriately.
+
+User-facing errors should be understandable.
+
+Technical details may be available through an advanced execution view.
+
+Example:
+
+```text
+Website could not be accessed.
+
+The agent attempted 2 alternative sources but both failed.
+
+[Retry]
+[Continue Manually]
+[Cancel Task]
+```
+
+---
+
+# 58. UX REQUIREMENTS
+
+The interface should be:
+
+* Modern
+* Minimal
+* Professional
+* Fast
+* Responsive
+* Accessible
+* Dark/light theme compatible
+
+The UI should prioritize the user's goal and outcome rather than technical complexity.
+
+Technical execution details should be available without becoming mandatory.
+
+---
+
+# 59. ACCESSIBILITY
+
+The application should support:
+
+* Keyboard navigation
+* Focus states
+* Screen readers
+* Semantic HTML
+* Accessible forms
+* Appropriate contrast
+* Reduced-motion preferences
+* Accessible status indicators
+
+---
+
+# 60. INTERNATIONALIZATION
+
+The architecture should be prepared for multiple languages.
+
+User-visible strings should not be hard-coded throughout application logic.
+
+The platform should support future localization of:
+
+* UI
+* System messages
+* Notifications
+* Reports
+* Generated artifacts where applicable
+
+---
+
+# 61. NOTIFICATIONS
+
+The platform may provide:
+
+* In-app notifications
+* Email notifications
+* Task completion notifications
+* Task failure notifications
+* Approval requests
+
+Users should be able to control notification preferences.
+
+---
+
+# 62. CORE END-TO-END EXAMPLE
+
+User:
+
+> "Research the top 20 AI resume builders, compare pricing and features, create an Excel spreadsheet, and produce a market analysis PDF."
+
+System:
+
+```text
+1. Understand request
+
+2. Determine required outputs
+
+3. Create execution plan
+
+4. Identify competitors
+
+5. Search web
+
+6. Open websites
+
+7. Collect pricing
+
+8. Collect features
+
+9. Validate information
+
+10. Normalize data
+
+11. Create XLSX
+
+12. Verify XLSX
+
+13. Analyze market
+
+14. Generate PDF
+
+15. Verify PDF
+
+16. Present artifacts
+
+17. Summarize key findings
+```
+
+Final result:
+
+```text
+Task completed.
+
+Artifacts:
+
+📊 competitor-analysis.xlsx
+📄 market-analysis.pdf
+
+Summary:
+- Market overview
+- Major competitors
+- Pricing patterns
+- Feature gaps
+- Opportunities
+```
+
+---
+
+# 63. CORE DOMAIN MODEL
+
+Conceptually:
+
+```text
+User
+ │
+ └── Workspace
+       │
+       ├── Members
+       │
+       ├── Projects
+       │     │
+       │     ├── Tasks
+       │     │     ├── TaskSteps
+       │     │     ├── TaskEvents
+       │     │     ├── AgentSessions
+       │     │     ├── ToolExecutions
+       │     │     └── ModelExecutions
+       │     │
+       │     ├── Files
+       │     ├── Artifacts
+       │     └── Memories
+       │
+       ├── Credentials
+       ├── Integrations
+       ├── Usage
+       └── AuditLogs
+```
+
+---
+
+# 64. RECOMMENDED TECHNOLOGY BASELINE
+
+If building as a new application, the recommended baseline is:
+
+### Frontend
+
+* Next.js
+* React
+* TypeScript
+* Tailwind CSS
+* shadcn/ui
+* Radix UI
+
+### Backend
+
+* Next.js server/API or dedicated Node.js services
+* TypeScript
+* Zod
+
+### Database
+
+* PostgreSQL
+* Prisma
+
+### Client State
+
+* Zustand
+* TanStack Query
+
+### Authentication
+
+* Auth.js or equivalent secure authentication system
+
+### Realtime
+
+* WebSocket or Server-Sent Events
+
+### Workers
+
+* Node.js/TypeScript workers
+
+### Storage
+
+* S3-compatible object storage
+
+### Queue
+
+* Redis-based or equivalent durable queue
+
+The technology stack is a baseline, not an absolute requirement.
+
+If an existing repository already uses a compatible stack, the implementation should preserve the existing architecture instead of unnecessarily replacing it.
+
+---
+
+# 65. DEVELOPMENT ARCHITECTURE PRINCIPLES
+
+The codebase should maintain clear boundaries between:
+
+```text
+UI
+API
+Domain Logic
+Agent Runtime
+Planner
+Model Layer
+Tool Layer
+Workers
+Sandbox
+Storage
+Infrastructure
+```
+
+Business logic should not be tightly coupled to UI components.
+
+Model providers should not be tightly coupled to agent logic.
+
+Tools should not directly depend on frontend code.
+
+Execution infrastructure should remain replaceable.
+
+---
+
+# 66. EXTENSIBILITY
+
+The architecture must allow future additions without major redesign.
+
+Future capabilities may include:
+
+* More AI providers
+* More browser engines
+* More computer environments
+* More tools
+* More integrations
+* Local models
+* Enterprise SSO
+* Team collaboration
+* Advanced workflow execution
+* Marketplace
+* Custom tool providers
+* Developer API
+* Mobile applications
+* Desktop applications
+
+---
+
+# 67. PRIVACY
+
+The platform should provide clear controls for:
+
+* Task data
+* Files
+* Artifacts
+* Memories
+* Credentials
+* Logs
+* Account deletion
+* Workspace deletion
+* Data retention
+
+Sensitive information should have controlled retention.
+
+User data should not be exposed between tenants.
+
+---
+
+# 68. DATA RETENTION
+
+Retention policies should be configurable where appropriate.
+
+Potential retention categories:
+
+```text
+Tasks
+Task Events
+Artifacts
+Uploaded Files
+Memory
+Audit Logs
+Execution Logs
+Credentials
+```
+
+Deletion must cascade or securely remove dependent data according to the data model.
+
+---
+
+# 69. BACKUP AND RECOVERY
+
+Production architecture should support:
+
+* Database backups
+* Artifact backup
+* Disaster recovery
+* Worker recovery
+* Queue recovery
+* Retry after worker failure
+
+Task state should remain durable enough to recover interrupted execution.
+
+---
+
+# 70. RELIABILITY
+
+The system should be designed so that:
+
+* Worker crashes do not corrupt task state.
+* Browser failures do not automatically destroy the task.
+* Model failures can trigger fallback.
+* Tool failures can trigger recovery.
+* User disconnects do not stop background execution.
+* Tasks can resume after temporary infrastructure failures.
+
+---
+
+# 71. PRODUCT ACCEPTANCE CRITERIA
+
+The product architecture is considered successful when the platform can reliably support a complex request through the complete lifecycle:
+
+```text
+User Goal
+    ↓
+Planning
+    ↓
+Task Graph
+    ↓
+Tool Selection
+    ↓
+Execution
+    ↓
+Observation
+    ↓
+Verification
+    ↓
+Recovery when required
+    ↓
+Artifact Creation
+    ↓
+Final Delivery
+```
+
+The system must demonstrate that:
+
+1. A user can create a task using natural language.
+2. The system can create an executable plan.
+3. The plan can contain multiple dependent steps.
+4. The agent can execute tools.
+5. Tools run through controlled execution boundaries.
+6. Long-running work executes asynchronously.
+7. Users can observe progress.
+8. Failures can trigger recovery.
+9. Important outputs are verified.
+10. Artifacts can be generated and downloaded.
+11. Tasks can be paused/cancelled where supported.
+12. Workspace isolation is enforced.
+13. Credentials are protected.
+14. Model providers can be changed.
+15. The system can scale workers independently.
+16. The system does not treat model-generated claims as proof of execution.
+17. The system can preserve project/task context appropriately.
+
+---
+
+# 72. DEFINITION OF A SUCCESSFUL TASK
+
+A task is not considered completed merely because the model says:
+
+> "Done."
+
+A successful task requires:
+
+```text
+Requested objective satisfied
+        +
+Required actions executed
+        +
+Expected outputs created
+        +
+Outputs verified
+        +
+No unresolved critical failures
+```
+
+Only then should the task enter:
+
+```text
+COMPLETED
+```
+
+---
+
+# 73. CORE PRODUCT DIFFERENTIATOR
+
+The central differentiator should be the autonomous execution loop:
+
+```text
+THINK
+ ↓
+PLAN
+ ↓
+ACT
+ ↓
+OBSERVE
+ ↓
+VERIFY
+ ↓
+RECOVER
+ ↓
+DELIVER
+```
+
+The product should optimize for **completed work**, not generated text.
+
+The fundamental unit of value is therefore:
+
+> A verified completed task.
+
+---
+
+# 74. LONG-TERM PRODUCT VISION
+
+The long-term system should evolve from an AI assistant into an autonomous digital worker.
+
+Users should eventually be able to say:
+
+```text
+"Prepare my weekly competitor report."
+
+"Analyze these 500 documents."
+
+"Build this feature in my repository."
+
+"Research this market and create an investor report."
+
+"Monitor these websites and notify me when something changes."
+
+"Analyze these files and create an executive presentation."
+
+"Find the best solution and execute the required work."
+```
+
+The system should determine the necessary steps, use appropriate tools, execute them safely, verify the outcome, recover when possible, and return the completed work.
+
+---
+
+# 75. FINAL PRODUCT DEFINITION
+
+This product is a:
+
+**Multi-tenant autonomous AI work platform that transforms natural-language goals into verified real-world digital work through planning, tool use, browser/computer interaction, code execution, file manipulation, observation, verification, and autonomous recovery.**
+
+The product should be designed around the following fundamental architecture:
+
+```text
+                    USER
+                     │
+                     ▼
+              TASK COMPOSER
+                     │
+                     ▼
+                TASK MANAGER
+                     │
+                     ▼
+                AGENT RUNTIME
+                     │
+             ┌───────┴───────┐
+             ▼               ▼
+          PLANNER       CONTEXT/MEMORY
+             │
+             ▼
+          TASK GRAPH
+             │
+             ▼
+        MODEL ROUTER
+             │
+             ▼
+       MODEL PROVIDERS
+             │
+             ▼
+        TOOL REGISTRY
+             │
+             ▼
+        TOOL EXECUTOR
+             │
+      ┌──────┼──────┬────────┐
+      ▼      ▼      ▼        ▼
+    WEB   BROWSER TERMINAL  FILES
+      │      │      │        │
+      └──────┼──────┼────────┘
+             ▼
+       CONTROLLED WORKERS
+             │
+             ▼
+        OBSERVATIONS
+             │
+             ▼
+         VERIFICATION
+             │
+        ┌────┴────┐
+        │         │
+      PASS      FAIL
+        │         │
+        ▼         ▼
+      RESULT   RECOVERY
+        │         │
+        │      REPLAN/RETRY
+        │         │
+        └────┬────┘
+             ▼
+          ARTIFACTS
+             │
+             ▼
+            USER
+```
+
+The platform's primary promise is:
+
+> **Give the system a goal. It figures out the work, performs it, verifies it, and gives you the result.**

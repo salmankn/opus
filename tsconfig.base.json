@@ -1,0 +1,32 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2023", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "strict": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "forceConsistentCasingInFileNames": true,
+    "noUncheckedIndexedAccess": true,
+    "noEmit": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "baseUrl": ".",
+    "paths": {
+      "@domain/*": ["packages/domain/src/*"],
+      "@agent-runtime/*": ["packages/agent-runtime/src/*"],
+      "@planner/*": ["packages/planner/src/*"],
+      "@models/*": ["packages/models/src/*"],
+      "@tools/*": ["packages/tools/src/*"],
+      "@queue/*": ["packages/queue/src/*"],
+      "@storage/*": ["packages/storage/src/*"],
+      "@verification/*": ["packages/verification/src/*"],
+      "@recovery/*": ["packages/recovery/src/*"]
+    }
+  },
+  "include": ["apps/*/src/**/*", "apps/web/**/*", "packages/*/src/**/*", "prisma/**/*"],
+  "exclude": ["node_modules", "**/.next", "**/dist"]
+}
